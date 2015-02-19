@@ -14,3 +14,7 @@ examples/django_rest_framework/backend/db.sqlite3
 *.bak*
 build
 *.egg
+
+dist/django_roa-1.8.2-py3.3.egg
+
+*.egg
