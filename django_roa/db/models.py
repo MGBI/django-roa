@@ -14,8 +14,7 @@ from django.db import models
 from django.db.models import signals
 from django.db.models.options import Options
 from django.db.models.loading import register_models, get_model
-from django.db.models.base import ModelBase, subclass_exception, \
-    get_absolute_url, method_get_order, method_set_order
+from django.db.models.base import ModelBase, subclass_exception, method_get_order, method_set_order
 from django.db.models.fields.related import (OneToOneField, add_lazy_relation)
 from django.utils.functional import curry
 from django.core.serializers.base import DeserializationError
@@ -23,7 +22,7 @@ from django.core.serializers.python import Deserializer as PythonDeserializer, _
 
 from functools import update_wrapper
 
-from django.utils.encoding import force_unicode, smart_unicode
+from django.utils.encoding import force_text, smart_text
 from rest_framework.parsers import JSONParser, XMLParser, YAMLParser
 from rest_framework.renderers import JSONRenderer, XMLRenderer, YAMLRenderer
 
@@ -36,7 +35,7 @@ logger = logging.getLogger("django_roa")
 
 DJANGO_LT_1_7 = django.VERSION[:2] < (1, 7)
 DJANGO_GT_1_4 = django.VERSION[:2] > (1, 4)
-
+PYTHON_LT_3_3 = sys.version_info<(3,3,0)
 
 ROA_ARGS_NAMES_MAPPING = getattr(settings, 'ROA_ARGS_NAMES_MAPPING', {})
 ROA_FORMAT = getattr(settings, 'ROA_FORMAT', 'json')
@@ -739,10 +738,10 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                     filters=ROA_FILTERS, **ROA_SSL_ARGS)
                 try:
                     logger.debug("""Modifying : "%s" through %s with payload "%s" and GET args "%s" """ % (
-                                  force_unicode(self),
-                                  force_unicode(resource.uri),
-                                  force_unicode(payload),
-                                  force_unicode(get_args)))
+                                  force_text(self),
+                                  force_text(resource.uri),
+                                  force_text(payload),
+                                  force_text(get_args)))
                     response = resource.put(payload=payload, headers=headers, **get_args)
                 except RequestFailed as e:
                     raise ROAException(e)
@@ -752,15 +751,15 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                     filters=ROA_FILTERS, **ROA_SSL_ARGS)
                 try:
                     logger.debug("""Creating  : "%s" through %s with payload "%s" and GET args "%s" """ % (
-                                  force_unicode(self),
-                                  force_unicode(resource.uri),
-                                  force_unicode(payload),
-                                  force_unicode(get_args)))
+                                  force_text(self),
+                                  force_text(resource.uri),
+                                  force_text(payload),
+                                  force_text(get_args)))
                     response = resource.post(payload=payload, headers=headers, **get_args)
                 except RequestFailed as e:
                     raise ROAException(e)
 
-            response = force_unicode(response.body_string()).encode(DEFAULT_CHARSET)
+            response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
 
             data = self.get_parser().parse(StringIO(response))
             serializer = self.get_serializer(data=data)

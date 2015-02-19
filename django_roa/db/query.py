@@ -13,7 +13,7 @@ try:
 except:
     from django.db.models.sql.constants import LOOKUP_SEP
 from django.db.models.query_utils import Q
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from restkit import Resource, ResourceNotFound
 from django_roa.db.exceptions import ROAException, ROANotImplementedYetException
@@ -204,14 +204,14 @@ class RemoteQuerySet(query.QuerySet):
             logger.debug("""Requesting: "%s" through %s with parameters "%s" """ % (
                           self.model.__name__,
                           resource.uri,
-                          force_unicode(parameters)))
+                          force_text(parameters)))
             response = resource.get(headers=self._get_http_headers(), **parameters)
         except ResourceNotFound:
             return
         except Exception as e:
             raise ROAException(e)
 
-        response = force_unicode(response.body_string()).encode(DEFAULT_CHARSET)
+        response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
 
         # Deserializing objects:
         data = self.model.get_parser().parse(StringIO(response))
@@ -255,12 +255,12 @@ class RemoteQuerySet(query.QuerySet):
             logger.debug("""Counting  : "%s" through %s with parameters "%s" """ % (
                 clone.model.__name__,
                 resource.uri,
-                force_unicode(parameters)))
+                force_text(parameters)))
             response = resource.get(headers=self._get_http_headers(), **parameters)
         except Exception as e:
             raise ROAException(e)
 
-        response = force_unicode(response.body_string()).encode(DEFAULT_CHARSET)
+        response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
         data = self.model.get_parser().parse(StringIO(response))
         return self.model.count_response(data)
 
@@ -291,12 +291,12 @@ class RemoteQuerySet(query.QuerySet):
             logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
                 clone.model.__name__,
                 resource.uri,
-                force_unicode(parameters)))
+                force_text(parameters)))
             response = resource.get(headers=self._get_http_headers(), **parameters)
         except Exception as e:
             raise ROAException(e)
 
-        response = force_unicode(response.body_string()).encode(DEFAULT_CHARSET)
+        response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
 
         for local_name, remote_name in ROA_MODEL_NAME_MAPPING:
             response = response.replace(remote_name, local_name)

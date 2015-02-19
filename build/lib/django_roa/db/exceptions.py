@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.utils.html import strip_tags
 from django.utils.text import unescape_entities
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 ROA_DJANGO_ERRORS = getattr(settings, 'ROA_DJANGO_ERRORS', False)
 
@@ -18,9 +18,9 @@ class ROAException(Exception):
             self.status_code = "XXX"
 
         if hasattr(exception, 'message'):
-            self.msg = force_unicode(exception.message)
+            self.msg = force_text(exception.message)
         else:
-            self.msg = force_unicode(exception)
+            self.msg = force_text(exception)
 
     def __str__(self):
         if ROA_DJANGO_ERRORS and '<body>' in self.msg:
@@ -50,8 +50,8 @@ class ROAException(Exception):
         result.append("Status code: %s" % self.status_code)
         indent, indent2 = '  ', '    '
         return "%(summary)s %(traceback)s".strip() % {
-            'summary': indent.join(force_unicode(line) for line in result),
-            'traceback': indent2.join(force_unicode(line+"\n") \
+            'summary': indent.join(force_text(line) for line in result),
+            'traceback': indent2.join(force_text(line+"\n") \
                                         for line in traceback.split('\n')),
         }
 
