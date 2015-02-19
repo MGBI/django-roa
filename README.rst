@@ -1,5 +1,5 @@
 ===========================================
-Django-ROA (Resource Oriented Architecture)
+Django-ROA for Python3 (Resource Oriented Architecture)
 ===========================================
 
 **Use Django's ORM to model remote API resources.**
@@ -30,8 +30,7 @@ Supported versions
     :alt: Build Status
 
 - Django 1.4, 1.5, 1.6, 1.7
-- Python 2.6, 2.7
-
+- Python 3.2, 3.3 
 
 Installation
 ============

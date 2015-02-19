@@ -2,6 +2,8 @@
 Django-ROA's changelog
 ======================
 
+* Patched for Python 3
+
 Version 1.8.1, 21 Nov 2014:
 --------------------------
 

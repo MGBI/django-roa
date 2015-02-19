@@ -8,9 +8,26 @@ except ImportError:
     ez_setup.use_setuptools()
     from setuptools import setup, find_packages
 
+import sys
+if sys.version_info<(3,3,0):
+    requires=[
+        'Django',
+        'restkit',
+        'wsgiref',
+        'simplejson',
+        'djangorestframework'
+    ]
+else:
+    requires=[
+        'Django',
+        'restkit',
+        'simplejson',
+        'djangorestframework'
+    ]
+    
 setup(
     name='django-roa',
-    version='1.8.1',
+    version='1.8.2',
     url='https://github.com/charles-vdulac/django-roa',
     download_url='https://github.com/charles-vdulac/django-roa/archive/master.zip',
     license='BSD',
@@ -29,13 +46,7 @@ setup(
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP',
     ],
-    install_requires=[
-        'Django',
-        'restkit',
-        'wsgiref',
-        'simplejson',
-        'djangorestframework'
-    ],
+    install_requires=requires,
     tests_require={
         'Piston-tests': ['django-piston'],
     }
