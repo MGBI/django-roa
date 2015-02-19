@@ -25,8 +25,8 @@ Initial documentation:
 Supported versions
 ==================
 
-.. image:: https://travis-ci.org/charles-vdulac/django-roa.png?branch=master
-    :target: https://travis-ci.org/charles-vdulac/django-roa
+.. image:: https://travis-ci.org/bjarnoldus/django-roa.png?branch=master
+    :target: https://travis-ci.org/bjarnoldus/django-roa
     :alt: Build Status
 
 - Django 1.4, 1.5, 1.6, 1.7
