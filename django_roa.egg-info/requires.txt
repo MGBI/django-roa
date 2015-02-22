@@ -1,4 +1,4 @@
 Django
-restkit
+requests
 simplejson
 djangorestframework

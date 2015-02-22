@@ -1,5 +1,5 @@
 import logging
-from io import StringIO
+from io import StringIO, BytesIO
 
 from django.conf import settings
 from django.db.models import query
@@ -15,8 +15,11 @@ except:
 from django.db.models.query_utils import Q
 from django.utils.encoding import force_text
 
-from restkit import Resource, ResourceNotFound
 from django_roa.db.exceptions import ROAException, ROANotImplementedYetException
+
+
+
+import requests
 
 logger = logging.getLogger("django_roa")
 
@@ -197,24 +200,20 @@ class RemoteQuerySet(query.QuerySet):
         An iterator over the results from applying this QuerySet to the
         remote web service.
         """
-        resource = Resource(self.model.get_resource_url_list(),
-                            filters=ROA_FILTERS, **ROA_SSL_ARGS)
+
         try:
-            parameters = self.query.parameters
-            logger.debug("""Requesting: "%s" through %s with parameters "%s" """ % (
-                          self.model.__name__,
-                          resource.uri,
-                          force_text(parameters)))
-            response = resource.get(headers=self._get_http_headers(), **parameters)
-        except ResourceNotFound:
-            return
+            parameters = clone.query.parameters
+            logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
+                clone.model.__name__,
+                self.model.get_resource_url_list(),
+                force_text(parameters)))
+            response = requests.get(self.model.get_resource_url_list(),headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 
-        response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
-
         # Deserializing objects:
-        data = self.model.get_parser().parse(StringIO(response))
+        response=response.text.encode("utf-8")
+        data = self.model.get_parser().parse(BytesIO(response))
 
         # Check limit_start and limit_stop arguments for pagination and only
         # slice data if they are both numeric and there are results left to go.
@@ -248,20 +247,20 @@ class RemoteQuerySet(query.QuerySet):
         # a staticmethod for get_resource_url_count and avoid to set it
         # for all model without relying on get_resource_url_list
         instance = clone.model()
-        resource = Resource(instance.get_resource_url_count(),
-                            filters=ROA_FILTERS, **ROA_SSL_ARGS)
+
         try:
             parameters = clone.query.parameters
-            logger.debug("""Counting  : "%s" through %s with parameters "%s" """ % (
+            logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
                 clone.model.__name__,
-                resource.uri,
+                self.model.get_resource_url_list(),
                 force_text(parameters)))
-            response = resource.get(headers=self._get_http_headers(), **parameters)
+            response = requests.get(self.model.get_resource_url_list(),headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 
-        response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
-        data = self.model.get_parser().parse(StringIO(response))
+        response=response.text.encode("utf-8")
+
+        data = self.model.get_parser().parse(BytesIO(response))
         return self.model.count_response(data)
 
     def _get_from_id_or_pk(self, id=None, pk=None, **kwargs):
@@ -283,26 +282,24 @@ class RemoteQuerySet(query.QuerySet):
         extra_args = {}
         extra_args.update(kwargs)
         extra_args.update(ROA_SSL_ARGS)
-        resource = Resource(instance.get_resource_url_detail(),
-                            filters=ROA_FILTERS,
-                            **extra_args)
+
         try:
             parameters = clone.query.parameters
             logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
                 clone.model.__name__,
-                resource.uri,
+                instance.get_resource_url_detail(),
                 force_text(parameters)))
-            response = resource.get(headers=self._get_http_headers(), **parameters)
+            response = requests.get(instance.get_resource_url_detail(),headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 
-        response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
+        response=response.text.encode("utf-8")
 
         for local_name, remote_name in ROA_MODEL_NAME_MAPPING:
             response = response.replace(remote_name, local_name)
 
         # Deserializing objects:
-        data = self.model.get_parser().parse(StringIO(response))
+        data = self.model.get_parser().parse(BytesIO(response))
         serializer = self.model.get_serializer(data=data)
         if not serializer.is_valid():
             raise ROAException('Invalid deserialization for %s model: %s' % (self.model, serializer.errors))

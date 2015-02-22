@@ -12,7 +12,7 @@ import sys
 if sys.version_info<(3,3,0):
     requires=[
         'Django',
-        'restkit',
+        'requests',
         'wsgiref',
         'simplejson',
         'djangorestframework'
@@ -20,14 +20,14 @@ if sys.version_info<(3,3,0):
 else:
     requires=[
         'Django',
-        'restkit',
+        'requests',
         'simplejson',
         'djangorestframework'
     ]
     
 setup(
     name='django-roa',
-    version='1.8.',
+    version='1.8.37',
     url='https://github.com/charles-vdulac/django-roa',
     download_url='https://github.com/charles-vdulac/django-roa/archive/master.zip',
     license='BSD',

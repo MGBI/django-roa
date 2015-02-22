@@ -26,9 +26,10 @@ from django.utils.encoding import force_text, smart_text
 from rest_framework.parsers import JSONParser, XMLParser, YAMLParser
 from rest_framework.renderers import JSONRenderer, XMLRenderer, YAMLRenderer
 
-from restkit import Resource, RequestFailed, ResourceNotFound
 from django_roa.db import get_roa_headers
 from django_roa.db.exceptions import ROAException
+
+import requests
 
 logger = logging.getLogger("django_roa")
 
@@ -722,10 +723,10 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
             if not meta.pk.attname in ['pk', 'id']:
                 # consider it might be inserting so check it first
                 # @todo: try to improve this block to check if custom pripary key is not None first
-                resource = Resource(self.get_resource_url_detail(),
-                                    filters=ROA_FILTERS, **ROA_SSL_ARGS)
+
                 try:
-                    response = resource.get(payload=None, headers=headers, **get_args)
+                    response=requests.get(self.get_resource_url_detail(),params=None,headers=headers)
+                    response=BytesIO(response.text.encode("utf-8"))    
                 except ResourceNotFound:
                     # since such resource does not exist, it's actually creating
                     pk_is_set = False
@@ -734,34 +735,30 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
 
             if force_update or pk_is_set and not self.pk is None:
                 record_exists = True
-                resource = Resource(self.get_resource_url_detail(),
-                                    filters=ROA_FILTERS, **ROA_SSL_ARGS)
                 try:
                     logger.debug("""Modifying : "%s" through %s with payload "%s" and GET args "%s" """ % (
                                   force_text(self),
                                   force_text(resource.uri),
                                   force_text(payload),
                                   force_text(get_args)))
-                    response = resource.put(payload=payload, headers=headers, **get_args)
+                    response=requests.put(self.get_resource_url_detail(),params=payload,headers=headers)
+                    response=response.text.encode("utf-8")    
                 except RequestFailed as e:
                     raise ROAException(e)
             else:
                 record_exists = False
-                resource = Resource(self.get_resource_url_list(),
-                                    filters=ROA_FILTERS, **ROA_SSL_ARGS)
                 try:
                     logger.debug("""Creating  : "%s" through %s with payload "%s" and GET args "%s" """ % (
                                   force_text(self),
                                   force_text(resource.uri),
                                   force_text(payload),
                                   force_text(get_args)))
-                    response = resource.post(payload=payload, headers=headers, **get_args)
+                    response=requests.post(self.get_resource_url_list(),params=payload,headers=headers)
+                    response=response.text.encode("utf-8")  
                 except RequestFailed as e:
                     raise ROAException(e)
 
-            response = force_text(response.body_string()).encode(DEFAULT_CHARSET)
-
-            data = self.get_parser().parse(StringIO(response))
+            data = self.get_parser().parse(BytesIO(response))
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid():
                 raise ROAException('Invalid deserialization for %s model: %s' % (self, serializer.errors))
@@ -783,8 +780,6 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                 % (self._meta.object_name, self._meta.pk.attname)
 
         # Deletion in cascade should be done server side.
-        resource = Resource(self.get_resource_url_detail(),
-                            filters=ROA_FILTERS, **ROA_SSL_ARGS)
 
         logger.debug("""Deleting  : "%s" through %s""" % \
             (str(self), str(resource.uri)))
@@ -793,8 +788,9 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
         headers = get_roa_headers()
         headers.update(self.get_serializer_content_type())
 
-        result = resource.delete(headers=headers, **ROA_CUSTOM_ARGS)
-        if result.status_int in [200, 202, 204]:
+        response=requests.delete(self.get_resource_url_detail(),headers=headers)
+
+        if response.status_code in [200, 202, 204]:
             self.pk = None
 
     delete.alters_data = True
