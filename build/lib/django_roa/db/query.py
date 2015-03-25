@@ -202,12 +202,16 @@ class RemoteQuerySet(query.QuerySet):
         """
 
         try:
-            parameters = clone.query.parameters
+            parameters = self.query.parameters
             logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
-                clone.model.__name__,
+                self.model.__name__,
                 self.model.get_resource_url_list(),
                 force_text(parameters)))
-            response = requests.get(self.model.get_resource_url_list(),headers=self._get_http_headers())
+            print("""Retrieving : "%s" through %s with parameters "%s" """ % (
+                self.model.__name__,
+                self.model.get_resource_url_list(),
+                force_text(parameters)));
+            response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 
@@ -254,7 +258,11 @@ class RemoteQuerySet(query.QuerySet):
                 clone.model.__name__,
                 self.model.get_resource_url_list(),
                 force_text(parameters)))
-            response = requests.get(self.model.get_resource_url_list(),headers=self._get_http_headers())
+            print("""Retrieving : "%s" through %s with parameters "%s" """ % (
+                clone.model.__name__,
+                self.model.get_resource_url_list(),
+                force_text(parameters)));
+            response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 
@@ -289,7 +297,11 @@ class RemoteQuerySet(query.QuerySet):
                 clone.model.__name__,
                 instance.get_resource_url_detail(),
                 force_text(parameters)))
-            response = requests.get(instance.get_resource_url_detail(),headers=self._get_http_headers())
+            print("""Retrieving : "%s" through %s with parameters "%s" """ % (
+                clone.model.__name__,
+                instance.get_resource_url_detail(),
+                force_text(parameters)));
+            response = requests.get(instance.get_resource_url_detail(),params=parameters,headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 

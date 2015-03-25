@@ -1,7 +1,7 @@
 import sys
 import copy
 import logging
-from io import StringIO
+from io import StringIO, BytesIO
 from django.utils import six
 
 import django
@@ -30,6 +30,7 @@ from django_roa.db import get_roa_headers
 from django_roa.db.exceptions import ROAException
 
 import requests
+from requests.exceptions import HTTPError
 
 logger = logging.getLogger("django_roa")
 
@@ -726,36 +727,36 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
 
                 try:
                     response=requests.get(self.get_resource_url_detail(),params=None,headers=headers)
-                    response=BytesIO(response.text.encode("utf-8"))    
-                except ResourceNotFound:
-                    # since such resource does not exist, it's actually creating
-                    pk_is_set = False
-                except RequestFailed:
+                    print(response.text)
+                    print(response.status_code) 
+                    response=response.text.encode("utf-8") 
+                except HTTPError:
                     pk_is_set = False
 
+            print(pk_is_set)
             if force_update or pk_is_set and not self.pk is None:
                 record_exists = True
                 try:
                     logger.debug("""Modifying : "%s" through %s with payload "%s" and GET args "%s" """ % (
                                   force_text(self),
-                                  force_text(resource.uri),
+                                  force_text(self.get_resource_url_detail()),
                                   force_text(payload),
                                   force_text(get_args)))
-                    response=requests.put(self.get_resource_url_detail(),params=payload,headers=headers)
+                    response=requests.put(self.get_resource_url_detail(),data=payload,headers=headers)
                     response=response.text.encode("utf-8")    
-                except RequestFailed as e:
+                except HTTPError as e:
                     raise ROAException(e)
             else:
                 record_exists = False
                 try:
                     logger.debug("""Creating  : "%s" through %s with payload "%s" and GET args "%s" """ % (
                                   force_text(self),
-                                  force_text(resource.uri),
+                                  force_text(self.get_resource_url_list()),
                                   force_text(payload),
                                   force_text(get_args)))
-                    response=requests.post(self.get_resource_url_list(),params=payload,headers=headers)
+                    response=requests.post(self.get_resource_url_list(),data=payload,headers=headers)
                     response=response.text.encode("utf-8")  
-                except RequestFailed as e:
+                except HTTPError as e:
                     raise ROAException(e)
 
             data = self.get_parser().parse(BytesIO(response))
@@ -782,7 +783,7 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
         # Deletion in cascade should be done server side.
 
         logger.debug("""Deleting  : "%s" through %s""" % \
-            (str(self), str(resource.uri)))
+            (str(self), str(self.get_resource_url_detail())))
 
         # Add serializer content_type
         headers = get_roa_headers()
