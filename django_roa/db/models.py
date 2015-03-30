@@ -727,13 +727,10 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
 
                 try:
                     response=requests.get(self.get_resource_url_detail(),params=None,headers=headers)
-                    print(response.text)
-                    print(response.status_code) 
                     response=response.text.encode("utf-8") 
                 except HTTPError:
                     pk_is_set = False
 
-            print(pk_is_set)
             if force_update or pk_is_set and not self.pk is None:
                 record_exists = True
                 try:

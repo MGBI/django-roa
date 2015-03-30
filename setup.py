@@ -27,9 +27,9 @@ else:
     
 setup(
     name='django-roa',
-    version='1.8.55',
-    url='https://github.com/charles-vdulac/django-roa',
-    download_url='https://github.com/charles-vdulac/django-roa/archive/master.zip',
+    version='1.8.56',
+    url='https://github.com/bjarnoldus/django-roa',
+    download_url='https://github.com/bjarnoldus/django-roa/archive/master.zip',
     license='BSD',
     description="Turn your models into remote resources that you can access through Django's ORM.",
     author='David Larlet',
@@ -43,7 +43,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Programming Language :: Python3',
         'Topic :: Internet :: WWW/HTTP',
     ],
     install_requires=requires,
