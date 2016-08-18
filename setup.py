@@ -15,16 +15,20 @@ if sys.version_info<(3,3,0):
         'requests',
         'wsgiref',
         'simplejson',
-        'djangorestframework'
+        'djangorestframework',
+        'djangorestframework-xml',
+        'djangorestframework-yaml'
     ]
 else:
     requires=[
         'Django',
         'requests',
         'simplejson',
-        'djangorestframework'
+        'djangorestframework',
+        'djangorestframework-xml',
+        'djangorestframework-yaml'
     ]
-    
+
 setup(
     name='django-roa',
     version='1.8.56',

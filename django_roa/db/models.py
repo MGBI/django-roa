@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned,\
 from django.db import models
 from django.db.models import signals
 from django.db.models.options import Options
-from django.db.models.loading import register_models, get_model
+from django.apps import apps
 from django.db.models.base import ModelBase, subclass_exception, method_get_order, method_set_order
 from django.db.models.fields.related import (OneToOneField, add_lazy_relation)
 from django.utils.functional import curry
@@ -23,8 +23,12 @@ from django.core.serializers.python import Deserializer as PythonDeserializer, _
 from functools import update_wrapper
 
 from django.utils.encoding import force_text, smart_text
-from rest_framework.parsers import JSONParser, XMLParser, YAMLParser
-from rest_framework.renderers import JSONRenderer, XMLRenderer, YAMLRenderer
+from rest_framework.parsers import JSONParser
+from rest_framework_yaml.parsers import YAMLParser
+from rest_framework_xml.parsers import XMLParser
+from rest_framework.renderers import JSONRenderer
+from rest_framework_yaml.renderers import YAMLRenderer
+from rest_framework_xml.renderers import XMLRenderer
 
 from django_roa.db import get_roa_headers
 from django_roa.db.exceptions import ROAException
@@ -393,7 +397,7 @@ class ROAModelBase(ModelBase):
                 new_class._base_manager = new_class._base_manager._copy_to_model(new_class)
 
         # Bail out early if we have already created this class.
-        m = get_model(new_class._meta.app_label, name,
+        m = apps.get_model(new_class._meta.app_label, name,
                       seed_cache=False, only_installed=False)
         if m is not None:
             return m
@@ -500,13 +504,15 @@ class ROAModelBase(ModelBase):
             return new_class
 
         new_class._prepare()
-        register_models(new_class._meta.app_label, new_class)
+
+        # BJA Not relevant???
+        # register_models(new_class._meta.app_label, new_class)
 
         # Because of the way imports happen (recursively), we may or may not be
         # the first time this model tries to register with the framework. There
         # should only be one class for each model, so we always return the
         # registered version.
-        return get_model(new_class._meta.app_label, name,
+        return apps.get_model(new_class._meta.app_label, name,
                          seed_cache=False, only_installed=False)
 
     def _prepare(cls):
@@ -727,7 +733,7 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
 
                 try:
                     response=requests.get(self.get_resource_url_detail(),params=None,headers=headers)
-                    response=response.text.encode("utf-8") 
+                    response=response.text.encode("utf-8")
                 except HTTPError:
                     pk_is_set = False
 
@@ -740,7 +746,7 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                   force_text(payload),
                                   force_text(get_args)))
                     response=requests.put(self.get_resource_url_detail(),data=payload,headers=headers)
-                    response=response.text.encode("utf-8")    
+                    response=response.text.encode("utf-8")
                 except HTTPError as e:
                     raise ROAException(e)
             else:
@@ -752,7 +758,7 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                   force_text(payload),
                                   force_text(get_args)))
                     response=requests.post(self.get_resource_url_list(),data=payload,headers=headers)
-                    response=response.text.encode("utf-8")  
+                    response=response.text.encode("utf-8")
                 except HTTPError as e:
                     raise ROAException(e)
 
