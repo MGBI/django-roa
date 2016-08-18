@@ -37,7 +37,7 @@ Installation
 
 .. code:: bash
 
-    $ pip install -e git+https://github.com/charles-vdulac/django-roa.git@master#egg=django_roa
+    $ pip install -e git+https://github.com/bjarnoldus/django-roa.git@master#egg=django_roa
 
 
 Fork getting started
