@@ -70,7 +70,6 @@ class ROAModelBase(ModelBase):
         import warnings
         from django.apps.config import MODELS_MODULE_NAME
         from django.apps import apps
-        from django.utils.deprecation import RemovedInDjango19Warning
 
         super_new = super(ModelBase, cls).__new__
 
