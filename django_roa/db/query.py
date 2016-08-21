@@ -231,7 +231,7 @@ class RemoteQuerySet(query.QuerySet):
             if not serializer.is_valid():
                 raise ROAException('Invalid deserialization for %s model: %s' % (self.model, serializer.errors))
 
-            for obj in serializer.object:
+            for obj in serializer.instance:
                 yield obj
 
     def count(self):
@@ -301,10 +301,17 @@ class RemoteQuerySet(query.QuerySet):
         # Deserializing objects:
         data = self.model.get_parser().parse(BytesIO(response))
         serializer = self.model.get_serializer(data=data)
+        for field in serializer.fields.items():
+            validators = field[1].validators
+            field[1].validators =[]
+            for validator in validators:
+                if validator.__class__.__name__ != "UniqueValidator":
+                    field[1].validators.append(validator)
+
         if not serializer.is_valid():
             raise ROAException('Invalid deserialization for %s model: %s' % (self.model, serializer.errors))
 
-        return serializer.object
+        return serializer.instance
 
     def get(self, *args, **kwargs):
         """
