@@ -25,6 +25,5 @@ def ensure_roa_manager(sender, **kwargs):
                 and not hasattr(manager, 'is_roa_manager')):
         # Create the default manager, if needed.
         cls.add_to_class('objects', Manager())
-        cls.add_to_class('_default_manager', Manager())
 
 signals.class_prepared.connect(ensure_roa_manager)

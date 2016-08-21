@@ -2,6 +2,9 @@
 Django-ROA's changelog
 ======================
 
+Version 2.0.1, 21 Aug 2016:
+--------------------------
+* Patched for Django 1.9+
 * Patched for Python 3
 
 Version 1.8.1, 21 Nov 2014:

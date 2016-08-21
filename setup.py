@@ -31,13 +31,13 @@ else:
 
 setup(
     name='django-roa',
-    version='1.8.56',
+    version='2.0.1',
     url='https://github.com/bjarnoldus/django-roa',
     download_url='https://github.com/bjarnoldus/django-roa/archive/master.zip',
     license='BSD',
     description="Turn your models into remote resources that you can access through Django's ORM.",
-    author='David Larlet',
-    author_email='david@larlet.fr',
+    author='Jeroen Arnoldus',
+    author_email='jeroen@repleo.nl',
     packages=find_packages(),
     include_package_data=True,
     classifiers=[

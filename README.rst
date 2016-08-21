@@ -29,8 +29,8 @@ Supported versions
     :target: https://travis-ci.org/bjarnoldus/django-roa
     :alt: Build Status
 
-- Django 1.4, 1.5, 1.6, 1.7
-- Python 3.2, 3.3 
+- Django 1.9, 1.10
+- Python 3.2, 3.3, 3.4, 3.5 
 
 Installation
 ============
