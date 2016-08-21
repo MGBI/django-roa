@@ -227,12 +227,24 @@ class RemoteQuerySet(query.QuerySet):
 
         # [] is the case of empty no-paginated result
         if data != []:
+            result = []
+
             serializer = self.model.get_serializer(data=data)
+            for field in serializer.child.fields.items():
+                validators = field[1].validators
+                field[1].validators = []
+                for validator in validators:
+                    if validator.__class__.__name__ != "UniqueValidator":
+                        field[1].validators.append(validator)
+
             if not serializer.is_valid():
                 raise ROAException('Invalid deserialization for %s model: %s' % (self.model, serializer.errors))
 
-            for obj in serializer.instance:
-                yield obj
+            for item in serializer.validated_data:
+                obj = serializer.child.Meta.model(**item)
+                result.append(obj)
+
+            return result
 
     def count(self):
         """
