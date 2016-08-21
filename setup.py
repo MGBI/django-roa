@@ -31,7 +31,7 @@ else:
 
 setup(
     name='django-roa',
-    version='2.0.1',
+    version='2.0.2',
     url='https://github.com/bjarnoldus/django-roa',
     download_url='https://github.com/bjarnoldus/django-roa/archive/master.zip',
     license='BSD',
