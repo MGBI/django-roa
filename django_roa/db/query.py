@@ -323,7 +323,7 @@ class RemoteQuerySet(query.QuerySet):
         if not serializer.is_valid():
             raise ROAException('Invalid deserialization for %s model: %s' % (self.model, serializer.errors))
 
-        return serializer.instance
+        return serializer.Meta.model(**serializer.validated_data)
 
     def get(self, *args, **kwargs):
         """
