@@ -763,13 +763,22 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
 
             data = self.get_parser().parse(BytesIO(response))
             serializer = self.get_serializer(data=data)
+            
+            for field in serializer.fields.items():
+                validators = field[1].validators
+                field[1].validators = []
+                for validator in validators:
+                    if validator.__class__.__name__ != "UniqueValidator":
+                        field[1].validators.append(validator)
+
             if not serializer.is_valid():
                 raise ROAException('Invalid deserialization for %s model: %s' % (self, serializer.errors))
+            obj = serializer.Meta.model(**serializer.validated_data)
             try:
-                self.pk = int(serializer.object.pk)
+                self.pk = int(obj.pk)
             except ValueError:
-                self.pk = serializer.object.pk
-            self = serializer.object
+                self.pk = obj.pk
+            self = obj
 
         if origin:
             signals.post_save.send(sender=origin, instance=self,

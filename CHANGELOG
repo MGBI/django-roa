@@ -2,6 +2,11 @@
 Django-ROA's changelog
 ======================
 
+Version 2.0.4, 26 Aug 2016:
+--------------------------
+* Fixed serialization bug
+
+
 Version 2.0.3, 21 Aug 2016:
 --------------------------
 * Fixed serialization bug
