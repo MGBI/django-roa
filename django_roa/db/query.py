@@ -27,7 +27,7 @@ ROA_MODEL_NAME_MAPPING = getattr(settings, 'ROA_MODEL_NAME_MAPPING', [])
 ROA_ARGS_NAMES_MAPPING = getattr(settings, 'ROA_ARGS_NAMES_MAPPING', {})
 ROA_FORMAT = getattr(settings, 'ROA_FORMAT', 'json')
 ROA_FILTERS = getattr(settings, 'ROA_FILTERS', {})
-ROA_SSL_ARGS = getattr(settings, 'ROA_SSL_ARGS', {})
+ROA_SSL_CA = getattr(settings, 'ROA_SSL_CA', None)
 
 DEFAULT_CHARSET = getattr(settings, 'DEFAULT_CHARSET', 'utf-8')
 
@@ -207,8 +207,10 @@ class RemoteQuerySet(query.QuerySet):
                 self.model.__name__,
                 self.model.get_resource_url_list(),
                 force_text(parameters)))
-            response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
-        except Exception as e:
+            if ROA_SSL_CA:
+                response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers(),verify=ROA_SSL_CA)
+            else:
+                response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())        except Exception as e:
             raise ROAException(e)
 
         # Deserializing objects:
@@ -266,7 +268,12 @@ class RemoteQuerySet(query.QuerySet):
                 clone.model.__name__,
                 self.model.get_resource_url_list(),
                 force_text(parameters)))
-            response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
+            if ROA_SSL_CA:
+                response = requests.get(self.model.get_resource_url_list(), params=parameters,
+                                        headers=self._get_http_headers(),verify=ROA_SSL_CA)
+            else:
+                response = requests.get(self.model.get_resource_url_list(), params=parameters,
+                                        headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 
@@ -301,7 +308,12 @@ class RemoteQuerySet(query.QuerySet):
                 clone.model.__name__,
                 instance.get_resource_url_detail(),
                 force_text(parameters)))
-            response = requests.get(instance.get_resource_url_detail(),params=parameters,headers=self._get_http_headers())
+            if ROA_SSL_CA:
+                response = requests.get(self.model.get_resource_detail(), params=parameters,
+                                        headers=self._get_http_headers(),verify=ROA_SSL_CA)
+            else:
+                response = requests.get(self.model.get_resource_detail(), params=parameters,
+                                        headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 

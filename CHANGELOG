@@ -2,6 +2,11 @@
 Django-ROA's changelog
 ======================
 
+Version 2.0.7, 29 Aug 2016:
+--------------------------
+* Support for SSL CA certificates
+
+
 Version 2.0.6, 28 Aug 2016:
 --------------------------
 * Fixed handling of Q objects
