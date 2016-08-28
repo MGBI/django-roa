@@ -399,6 +399,13 @@ class RemoteQuerySet(query.QuerySet):
             assert self.query.can_filter(), \
                     "Cannot filter a query once a slice has been taken."
 
+        if not kwargs and args:
+            kwargs = {}
+            for arg in args:
+                for child in arg.children:
+                    if len(child) == 2 and arg.connector == "AND":
+                        kwargs.update({child[0]: child[1]})
+
         clone = self._clone()
         clone.query.filter(*args, **kwargs)
         return clone

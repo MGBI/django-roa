@@ -2,6 +2,10 @@
 Django-ROA's changelog
 ======================
 
+Version 2.0.6, 28 Aug 2016:
+--------------------------
+* Fixed handling of Q objects
+
 Version 2.0.5, 26 Aug 2016:
 --------------------------
 * Fixed serialization bug
