@@ -309,10 +309,10 @@ class RemoteQuerySet(query.QuerySet):
                 instance.get_resource_url_detail(),
                 force_text(parameters)))
             if ROA_SSL_CA:
-                response = requests.get(self.model.get_resource_detail(), params=parameters,
+                response = requests.get(instance.get_resource_url_detail(), params=parameters,
                                         headers=self._get_http_headers(),verify=ROA_SSL_CA)
             else:
-                response = requests.get(self.model.get_resource_detail(), params=parameters,
+                response = requests.get(instance.get_resource_url_detail(), params=parameters,
                                         headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
