@@ -2,6 +2,10 @@
 Django-ROA's changelog
 ======================
 
+Version 2.0.13, 30 Aug 2016:
+--------------------------
+* Added distinct_fields to query
+
 Version 2.0.12, 30 Aug 2016:
 --------------------------
 * Support for SSL CA certificates

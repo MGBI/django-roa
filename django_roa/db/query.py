@@ -48,6 +48,7 @@ class Query(object):
         self.max_depth = None
         self.extra_select = {}
         self.select_for_update = False
+        self.distinct_fields = []
 
     def can_filter(self):
         return self.filterable
