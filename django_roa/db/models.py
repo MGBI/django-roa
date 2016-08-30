@@ -50,7 +50,7 @@ ROA_MODEL_NAME_MAPPING = getattr(settings, 'ROA_MODEL_NAME_MAPPING', [])
 ROA_MODEL_CREATE_MAPPING = getattr(settings, 'ROA_MODEL_CREATE_MAPPING', {})
 ROA_MODEL_UPDATE_MAPPING = getattr(settings, 'ROA_MODEL_UPDATE_MAPPING', {})
 ROA_CUSTOM_ARGS = getattr(settings, "ROA_CUSTOM_ARGS", {})
-ROA_SSL_ARGS = getattr(settings, 'ROA_SSL_ARGS', {})
+ROA_SSL_CA = getattr(settings, 'ROA_SSL_CA', None)
 
 DEFAULT_CHARSET = getattr(settings, 'DEFAULT_CHARSET', 'utf-8')
 
@@ -731,7 +731,11 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                 # @todo: try to improve this block to check if custom pripary key is not None first
 
                 try:
-                    response=requests.get(self.get_resource_url_detail(),params=None,headers=headers)
+
+                    if ROA_SSL_CA:
+                        response=requests.get(self.get_resource_url_detail(),params=None,headers=headers,verify=ROA_SSL_CA)
+                    else:
+                        response=requests.get(self.get_resource_url_detail(),params=None,headers=headers)
                     response=response.text.encode("utf-8")
                 except HTTPError:
                     pk_is_set = False
@@ -744,7 +748,10 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                   force_text(self.get_resource_url_detail()),
                                   force_text(payload),
                                   force_text(get_args)))
-                    response=requests.put(self.get_resource_url_detail(),data=payload,headers=headers)
+                    if ROA_SSL_CA:
+                        response=requests.put(self.get_resource_url_detail(),data=payload,headers=headers,verify=ROA_SSL_CA)
+                    else:
+                        response=requests.put(self.get_resource_url_detail(),data=payload,headers=headers)
                     response=response.text.encode("utf-8")
                 except HTTPError as e:
                     raise ROAException(e)
@@ -756,14 +763,17 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                   force_text(self.get_resource_url_list()),
                                   force_text(payload),
                                   force_text(get_args)))
-                    response=requests.post(self.get_resource_url_list(),data=payload,headers=headers)
+                    if ROA_SSL_CA:
+                        response=requests.post(self.get_resource_url_list(),data=payload,headers=headers,verify=ROA_SSL_CA)
+                    else:
+                        response=requests.post(self.get_resource_url_list(),data=payload,headers=headers)
                     response=response.text.encode("utf-8")
                 except HTTPError as e:
                     raise ROAException(e)
 
             data = self.get_parser().parse(BytesIO(response))
             serializer = self.get_serializer(data=data)
-            
+
             for field in serializer.fields.items():
                 validators = field[1].validators
                 field[1].validators = []
@@ -800,8 +810,10 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
         headers = get_roa_headers()
         headers.update(self.get_serializer_content_type())
 
-        response=requests.delete(self.get_resource_url_detail(),headers=headers)
-
+        if ROA_SSL_CA:
+            response=requests.delete(self.get_resource_url_detail(),headers=headers,verify=ROA_SSL_CA)
+        else:
+            response=requests.delete(self.get_resource_url_detail(),headers=headers)
         if response.status_code in [200, 202, 204]:
             self.pk = None
 
