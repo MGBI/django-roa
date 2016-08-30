@@ -210,7 +210,8 @@ class RemoteQuerySet(query.QuerySet):
             if ROA_SSL_CA:
                 response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers(),verify=ROA_SSL_CA)
             else:
-                response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())        except Exception as e:
+                response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
+        except Exception as e:
             raise ROAException(e)
 
         # Deserializing objects:

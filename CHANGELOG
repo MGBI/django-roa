@@ -2,9 +2,13 @@
 Django-ROA's changelog
 ======================
 
+Version 2.0.9, 30 Aug 2016:
+--------------------------
+* Fixed syntax error
+
 Version 2.0.7, 30 Aug 2016:
 --------------------------
-* Fixed a query call
+* Fixed a query model call
 
 
 Version 2.0.7, 29 Aug 2016:
