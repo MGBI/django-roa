@@ -299,10 +299,6 @@ class RemoteQuerySet(query.QuerySet):
             instance.id = id
         else:
             instance.pk = pk
-        extra_args = {}
-        extra_args.update(kwargs)
-        extra_args.update(ROA_SSL_ARGS)
-
         try:
             parameters = clone.query.parameters
             logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
