@@ -1,5 +1,8 @@
 from threading import local
 from django.conf import settings
+from django.utils.module_loading import import_string
+
+import requests
 
 
 ROA_SESSION_HEADERS_KEY = 'roa_session_headers_key'
