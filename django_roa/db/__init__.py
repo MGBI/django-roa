@@ -7,6 +7,7 @@ ROA_SESSION_HEADERS_KEY = 'roa_session_headers_key'
 
 # Current thread access token:
 _roa_headers = local()
+_roa_client = local()
 
 
 def set_roa_headers(request, headers=None):
@@ -32,3 +33,8 @@ def get_roa_headers():
 def reset_roa_headers():
     if hasattr(_roa_headers, 'value'):
         del _roa_headers.value
+
+
+def get_roa_client():
+    client = getattr(settings, 'ROA_CLIENT', 'requests').copy()
+    return reduce(getattr, client.split("."), sys.modules[__name__])

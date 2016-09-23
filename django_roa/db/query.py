@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db.models import query
 from django.core import serializers
 # Django >= 1.5
-from django_roa.db import get_roa_headers
+from django_roa.db import get_roa_headers, get_roa_client
 
 try:
     from django.db.models.constants import LOOKUP_SEP
@@ -209,9 +209,9 @@ class RemoteQuerySet(query.QuerySet):
                 self.model.get_resource_url_list(),
                 force_text(parameters)))
             if ROA_SSL_CA:
-                response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers(),verify=ROA_SSL_CA)
+                response = self._get_requests_client().get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers(),verify=ROA_SSL_CA)
             else:
-                response = requests.get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
+                response = self._get_requests_client().get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
 
@@ -271,10 +271,10 @@ class RemoteQuerySet(query.QuerySet):
                 self.model.get_resource_url_list(),
                 force_text(parameters)))
             if ROA_SSL_CA:
-                response = requests.get(self.model.get_resource_url_list(), params=parameters,
+                response = self._get_requests_client().get(self.model.get_resource_url_list(), params=parameters,
                                         headers=self._get_http_headers(),verify=ROA_SSL_CA)
             else:
-                response = requests.get(self.model.get_resource_url_list(), params=parameters,
+                response = self._get_requests_client().get(self.model.get_resource_url_list(), params=parameters,
                                         headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
@@ -307,10 +307,10 @@ class RemoteQuerySet(query.QuerySet):
                 instance.get_resource_url_detail(),
                 force_text(parameters)))
             if ROA_SSL_CA:
-                response = requests.get(instance.get_resource_url_detail(), params=parameters,
+                response = self._get_requests_client().get(instance.get_resource_url_detail(), params=parameters,
                                         headers=self._get_http_headers(),verify=ROA_SSL_CA)
             else:
-                response = requests.get(instance.get_resource_url_detail(), params=parameters,
+                response = self._get_requests_client().get(instance.get_resource_url_detail(), params=parameters,
                                         headers=self._get_http_headers())
         except Exception as e:
             raise ROAException(e)
@@ -548,3 +548,6 @@ class RemoteQuerySet(query.QuerySet):
 
     def _get_http_headers(self):
         return get_roa_headers()
+
+    def _get_requests_client(self):
+        return get_roa_client()

@@ -30,7 +30,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework_yaml.renderers import YAMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 
-from django_roa.db import get_roa_headers
+from django_roa.db import get_roa_headers, get_roa_client
 from django_roa.db.exceptions import ROAException
 
 import requests
@@ -725,6 +725,8 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
             headers = get_roa_headers()
             headers.update(self.get_serializer_content_type())
 
+            requests_client = get_roa_client()
+
             # check if resource use custom primary key
             if not meta.pk.attname in ['pk', 'id']:
                 # consider it might be inserting so check it first
@@ -733,9 +735,9 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                 try:
 
                     if ROA_SSL_CA:
-                        response=requests.get(self.get_resource_url_detail(),params=None,headers=headers,verify=ROA_SSL_CA)
+                        response=requests_client.get(self.get_resource_url_detail(),params=None,headers=headers,verify=ROA_SSL_CA)
                     else:
-                        response=requests.get(self.get_resource_url_detail(),params=None,headers=headers)
+                        response=requests_client.get(self.get_resource_url_detail(),params=None,headers=headers)
                     response=response.text.encode("utf-8")
                 except HTTPError:
                     pk_is_set = False
@@ -749,9 +751,9 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                   force_text(payload),
                                   force_text(get_args)))
                     if ROA_SSL_CA:
-                        response=requests.put(self.get_resource_url_detail(),data=payload,headers=headers,verify=ROA_SSL_CA)
+                        response=requests_client.put(self.get_resource_url_detail(),data=payload,headers=headers,verify=ROA_SSL_CA)
                     else:
-                        response=requests.put(self.get_resource_url_detail(),data=payload,headers=headers)
+                        response=requests_client.put(self.get_resource_url_detail(),data=payload,headers=headers)
                     response=response.text.encode("utf-8")
                 except HTTPError as e:
                     raise ROAException(e)
@@ -764,9 +766,9 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
                                   force_text(payload),
                                   force_text(get_args)))
                     if ROA_SSL_CA:
-                        response=requests.post(self.get_resource_url_list(),data=payload,headers=headers,verify=ROA_SSL_CA)
+                        response=requests_client.post(self.get_resource_url_list(),data=payload,headers=headers,verify=ROA_SSL_CA)
                     else:
-                        response=requests.post(self.get_resource_url_list(),data=payload,headers=headers)
+                        response=requests_client.post(self.get_resource_url_list(),data=payload,headers=headers)
                     response=response.text.encode("utf-8")
                 except HTTPError as e:
                     raise ROAException(e)
@@ -810,10 +812,12 @@ class ROAModel(models.Model, metaclass=ROAModelBase):
         headers = get_roa_headers()
         headers.update(self.get_serializer_content_type())
 
+        requests_client = get_roa_client()
+
         if ROA_SSL_CA:
-            response=requests.delete(self.get_resource_url_detail(),headers=headers,verify=ROA_SSL_CA)
+            response=requests_client.delete(self.get_resource_url_detail(),headers=headers,verify=ROA_SSL_CA)
         else:
-            response=requests.delete(self.get_resource_url_detail(),headers=headers)
+            response=requests_client.delete(self.get_resource_url_detail(),headers=headers)
         if response.status_code in [200, 202, 204]:
             self.pk = None
 
