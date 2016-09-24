@@ -250,6 +250,8 @@ class RemoteQuerySet(query.QuerySet):
 
             return result
 
+        return []
+
     def count(self):
         """
         Returns the number of records as an integer.
