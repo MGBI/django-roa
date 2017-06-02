@@ -196,6 +196,10 @@ class RemoteQuerySet(query.QuerySet):
     # METHODS THAT DO RESOURCE QUERIES #
     ####################################
 
+    def _iterable_class(self, queryset, chunked_fetch=False):
+        """ Django 11 dummy support. """
+        return iter(queryset.iterator())
+
     def iterator(self):
         """
         An iterator over the results from applying this QuerySet to the
