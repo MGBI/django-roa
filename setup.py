@@ -51,7 +51,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     install_requires=requires,
-    tests_require={
-        'Piston-tests': ['django-piston'],
-    }
+    tests_require=[
+        'django-piston',
+    ]
 )
