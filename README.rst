@@ -29,15 +29,15 @@ Supported versions
     :target: https://travis-ci.org/bjarnoldus/django-roa
     :alt: Build Status
 
-- Django 1.9, 1.10
-- Python 3.2, 3.3, 3.4, 3.5 
+- Django 1.9, 1.10, 1.11 (in progress)
+- Python 3.2, 3.3, 3.4, 3.5, 3.6 (in progress)
 
 Installation
 ============
 
 .. code:: bash
 
-    $ pip install -e git+https://github.com/bjarnoldus/django-roa.git@master#egg=django_roa
+    $ pip install -e git+https://github.com/MGBI/django-roa.git@master#egg=django_roa
 
 
 Fork getting started
