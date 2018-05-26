@@ -30,15 +30,7 @@ Supported versions
     :alt: Build Status
 
 - Django 1.9, 1.10
-- Python 3.2, 3.3, 3.4, 3.5 
-
-Installation
-============
-
-.. code:: bash
-
-    $ pip install -e git+https://github.com/bjarnoldus/django-roa.git@master#egg=django_roa
-
+- Python 3.2, 3.3, 3.4, 3.5, 3.6
 
 Fork getting started
 ====================

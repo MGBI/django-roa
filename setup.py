@@ -30,10 +30,10 @@ else:
     ]
 
 setup(
-    name='django-roa',
-    version='2.0.13',
-    url='https://github.com/bjarnoldus/django-roa',
-    download_url='https://github.com/bjarnoldus/django-roa/archive/master.zip',
+    name='django-roa-kpr',
+    version='2.0.16',
+    url='https://github.com/Keypr/django-roa',
+    download_url='https://github.com/Keypr/django-roa/archive/master.zip',
     license='BSD',
     description="Turn your models into remote resources that you can access through Django's ORM.",
     author='Jeroen Arnoldus',
@@ -51,7 +51,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     install_requires=requires,
-    tests_require={
-        'Piston-tests': ['django-piston'],
-    }
+    tests_require=[
+        'django-piston',
+    ]
 )

@@ -2,3 +2,5 @@ Django
 requests
 simplejson
 djangorestframework
+djangorestframework-xml
+djangorestframework-yaml
