@@ -31,7 +31,7 @@ else:
 
 setup(
     name='django-roa-kpr',
-    version='2.0.16',
+    version='2.0.17',
     url='https://github.com/Keypr/django-roa',
     download_url='https://github.com/Keypr/django-roa/archive/master.zip',
     license='BSD',

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: django-roa
-Version: 2.0.16
+Version: 2.0.17
 Summary: Turn your models into remote resources that you can access through Django's ORM.
 Home-page: https://github.com/Keypr/django-roa
 Author: Jeroen Arnoldus
