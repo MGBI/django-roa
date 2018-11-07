@@ -172,19 +172,20 @@ class ROAModelIterable(BaseIterable):
         query = queryset.query
         try:
             parameters = query.parameters
+            resource_url_list = queryset.model.get_resource_url_list()
             logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
                 queryset.model.__name__,
-                queryset.model.get_resource_url_list(),
+                resource_url_list,
                 force_text(parameters)))
             if ROA_SSL_CA:
                 response = queryset._get_requests_client().get(
-                    queryset.model.get_resource_url_list(),
+                    resource_url_list,
                     params=parameters,
                     headers=queryset._get_http_headers(),
                     verify=ROA_SSL_CA)
             else:
                 response = queryset._get_requests_client().get(
-                    queryset.model.get_resource_url_list(),
+                    resource_url_list,
                     params=parameters,
                     headers=queryset._get_http_headers())
         except Exception as e:
