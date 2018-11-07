@@ -3,6 +3,7 @@ from io import StringIO, BytesIO
 
 from django.conf import settings
 from django.db.models import query
+from django.db.models.query import BaseIterable
 from django.core import serializers
 # Django >= 1.5
 from django_roa.db import get_roa_headers, get_roa_client
@@ -161,6 +162,69 @@ class Query(object):
         return True
 
 
+class ROAModelIterable(BaseIterable):
+    """
+    Iterator that yields a model instance for each row of a ROAModel.
+    """
+
+    def __iter__(self):
+        queryset = self.queryset
+        query = queryset.query
+        try:
+            parameters = query.parameters
+            resource_url_list = queryset.model.get_resource_url_list()
+            logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
+                queryset.model.__name__,
+                resource_url_list,
+                force_text(parameters)))
+            if ROA_SSL_CA:
+                response = queryset._get_requests_client().get(
+                    resource_url_list,
+                    params=parameters,
+                    headers=queryset._get_http_headers(),
+                    verify=ROA_SSL_CA)
+            else:
+                response = queryset._get_requests_client().get(
+                    resource_url_list,
+                    params=parameters,
+                    headers=queryset._get_http_headers())
+        except Exception as e:
+            raise ROAException(e)
+
+        # Deserializing objects:
+        response = response.text.encode("utf-8")
+        data = queryset.model.get_parser().parse(BytesIO(response))
+
+        # Check limit_start and limit_stop arguments for pagination and only
+        # slice data if they are both numeric and there are results left to go.
+        # We only perform this check on lists.
+        limit_start = getattr(query, 'limit_start', None)
+        limit_stop = getattr(query, 'limit_stop', None)
+        if (isinstance(limit_start, int) and isinstance(limit_stop, int) and
+           limit_stop - limit_start < len(data) and limit_stop <= len(data) and
+           isinstance(data, list)):
+                data = data[limit_start:limit_stop]
+
+        # [] is the case of empty no-paginated result
+        if data != []:
+
+            serializer = queryset.model.get_serializer(data=data)
+            for field in serializer.child.fields.items():
+                validators = field[1].validators
+                field[1].validators = []
+                for validator in validators:
+                    if validator.__class__.__name__ != "UniqueValidator":
+                        field[1].validators.append(validator)
+
+            if not serializer.is_valid():
+                raise ROAException('Invalid deserialization for %s model: %s' % (
+                    queryset.model, serializer.errors))
+
+            for item in serializer.validated_data:
+                obj = serializer.child.Meta.model(**item)
+                yield obj
+
+
 class RemoteQuerySet(query.QuerySet):
     """
     QuerySet which access remote resources.
@@ -174,6 +238,7 @@ class RemoteQuerySet(query.QuerySet):
         self._db = False
         self._for_write = False
         self._hints = {}
+        self._iterable_class = ROAModelIterable
 
         self.params = {}
 
@@ -201,56 +266,7 @@ class RemoteQuerySet(query.QuerySet):
         An iterator over the results from applying this QuerySet to the
         remote web service.
         """
-
-        try:
-            parameters = self.query.parameters
-            logger.debug("""Retrieving : "%s" through %s with parameters "%s" """ % (
-                self.model.__name__,
-                self.model.get_resource_url_list(),
-                force_text(parameters)))
-            if ROA_SSL_CA:
-                response = self._get_requests_client().get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers(),verify=ROA_SSL_CA)
-            else:
-                response = self._get_requests_client().get(self.model.get_resource_url_list(),params=parameters,headers=self._get_http_headers())
-        except Exception as e:
-            raise ROAException(e)
-
-        # Deserializing objects:
-        response=response.text.encode("utf-8")
-        data = self.model.get_parser().parse(BytesIO(response))
-
-        # Check limit_start and limit_stop arguments for pagination and only
-        # slice data if they are both numeric and there are results left to go.
-        # We only perform this check on lists.
-        limit_start = getattr(self.query, 'limit_start', None)
-        limit_stop = getattr(self.query, 'limit_stop', None)
-        if (isinstance(limit_start, int) and isinstance(limit_stop, int) and
-           limit_stop - limit_start < len(data) and limit_stop <= len(data) and
-           isinstance(data, list)):
-                data = data[limit_start:limit_stop]
-
-        # [] is the case of empty no-paginated result
-        if data != []:
-            result = []
-
-            serializer = self.model.get_serializer(data=data)
-            for field in serializer.child.fields.items():
-                validators = field[1].validators
-                field[1].validators = []
-                for validator in validators:
-                    if validator.__class__.__name__ != "UniqueValidator":
-                        field[1].validators.append(validator)
-
-            if not serializer.is_valid():
-                raise ROAException('Invalid deserialization for %s model: %s' % (self.model, serializer.errors))
-
-            for item in serializer.validated_data:
-                obj = serializer.child.Meta.model(**item)
-                result.append(obj)
-
-            return result
-
-        return []
+        return iter(self._iterable_class(self))
 
     def count(self):
         """
