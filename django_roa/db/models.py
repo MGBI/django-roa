@@ -15,7 +15,7 @@ from django.db.models import signals
 from django.db.models.options import Options
 from django.apps import apps
 from django.db.models.base import ModelBase, subclass_exception, method_get_order, method_set_order
-from django.db.models.fields.related import (OneToOneField, add_lazy_relation)
+from django.db.models.fields.related import (OneToOneField, lazy_related_operation)
 from django.utils.functional import curry
 from django.core.serializers.base import DeserializationError
 from django.core.serializers.python import Deserializer as PythonDeserializer, _get_model
@@ -53,6 +53,17 @@ ROA_CUSTOM_ARGS = getattr(settings, "ROA_CUSTOM_ARGS", {})
 ROA_SSL_CA = getattr(settings, 'ROA_SSL_CA', None)
 
 DEFAULT_CHARSET = getattr(settings, 'DEFAULT_CHARSET', 'utf-8')
+
+
+# adapted from:
+# https://github.com/django/django/blob/1.11/django/db/models/fields/related.py#L88
+def add_lazy_relation(cls, field, relation, operation):
+    # Rearrange args for new Apps.lazy_model_operation
+
+    def function(local, related, field):
+        return operation(field, related, local)
+
+    lazy_related_operation(function, cls, relation, field=field)
 
 
 class ROAModelBase(ModelBase):
