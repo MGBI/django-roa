@@ -196,7 +196,7 @@ class ROAModelBase(ModelBase):
         new_fields = (
             new_class._meta.local_fields +
             new_class._meta.local_many_to_many +
-            new_class._meta.virtual_fields
+            new_class._meta.private_fields
         )
         field_names = set(f.name for f in new_fields)
 
