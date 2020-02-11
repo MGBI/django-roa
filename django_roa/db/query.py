@@ -242,7 +242,7 @@ class RemoteQuerySet(query.QuerySet):
 
         self.params = {}
 
-        self._prefetch_related_lookups = False
+        self._prefetch_related_lookups = ()
 
     ########################
     # PYTHON MAGIC METHODS #

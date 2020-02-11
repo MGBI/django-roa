@@ -31,9 +31,9 @@ else:
 
 setup(
     name='django-roa-kpr',
-    version='2.0.17',
-    url='https://github.com/Keypr/django-roa',
-    download_url='https://github.com/Keypr/django-roa/archive/master.zip',
+    version='2.0.18',
+    url='https://github.com/Intelity/django-roa',
+    download_url='https://github.com/Intelity/django-roa/archive/master.zip',
     license='BSD',
     description="Turn your models into remote resources that you can access through Django's ORM.",
     author='Jeroen Arnoldus',
