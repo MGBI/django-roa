@@ -14,7 +14,9 @@ from django.db.models.options import Options
 from django.apps import apps
 from django.db.models.base import ModelBase, subclass_exception, method_get_order, method_set_order
 from django.db.models.fields.related import (OneToOneField, lazy_related_operation)
-from django.utils.functional import curry
+# removed in Django 3.0
+# from django.utils.functional import curry
+from functools import partial as curry
 
 from functools import update_wrapper
 
