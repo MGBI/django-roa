@@ -1,14 +1,12 @@
 import sys
 import copy
 import logging
-from io import StringIO, BytesIO
-from django.utils import six
+from io import BytesIO
 
 import django
 
 from django.conf import settings
-from django.core import serializers
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned,\
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, \
     FieldError
 from django.db import models
 from django.db.models import signals
@@ -17,12 +15,10 @@ from django.apps import apps
 from django.db.models.base import ModelBase, subclass_exception, method_get_order, method_set_order
 from django.db.models.fields.related import (OneToOneField, lazy_related_operation)
 from django.utils.functional import curry
-from django.core.serializers.base import DeserializationError
-from django.core.serializers.python import Deserializer as PythonDeserializer, _get_model
 
 from functools import update_wrapper
 
-from django.utils.encoding import force_text, smart_text
+from django.utils.encoding import force_text
 from rest_framework.parsers import JSONParser
 from rest_framework_yaml.parsers import YAMLParser
 from rest_framework_xml.parsers import XMLParser
@@ -33,7 +29,6 @@ from rest_framework_xml.renderers import XMLRenderer
 from django_roa.db import get_roa_headers, get_roa_client
 from django_roa.db.exceptions import ROAException
 
-import requests
 from requests.exceptions import HTTPError
 
 logger = logging.getLogger("django_roa")
