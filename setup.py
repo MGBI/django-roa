@@ -27,7 +27,7 @@ else:
         'requests',
         'simplejson',
         'djangorestframework',
-        'djangorestframework-xml',
+        'djangorestframework-xml@git+https://github.com/unchris/django-rest-framework-xml.git',
         'djangorestframework-yaml@git+https://github.com/SnijderC/django-rest-framework-yaml.git'
     ]
 
