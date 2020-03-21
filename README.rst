@@ -39,7 +39,6 @@ Installation
 
     $ pip install -e git+https://github.com/MGBI/django-roa.git@master#egg=django_roa
 
-
 Fork getting started
 ====================
 
