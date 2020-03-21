@@ -46,6 +46,7 @@ class Query(object):
         self.extra_select = {}
         self.select_for_update = False
         self.distinct_fields = []
+        self.combinator = None
 
     def can_filter(self):
         return self.filterable
