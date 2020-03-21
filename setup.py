@@ -33,7 +33,7 @@ else:
 
 setup(
     name='django-roa',
-    version='3.0.0',
+    version='3.0.1',
     url='https://github.com/MGBI/django-roa',
     download_url='https://github.com/MGBI/django-roa/archive/master.zip',
     license='BSD',

@@ -67,9 +67,9 @@ class Query(object):
     def exclude(self, *args, **kwargs):
         self.excludes.update(kwargs)
 
-    def set_limits(self, start=None, stop=None):
-        self.limit_start = start
-        self.limit_stop = stop
+    def set_limits(self, low=None, high=None):
+        self.limit_start = low
+        self.limit_stop = high
         self.filterable = False
 
     def add_select_related(self, fields):
