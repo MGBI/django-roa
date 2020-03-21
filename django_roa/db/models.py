@@ -14,9 +14,6 @@ from django.db.models.options import Options
 from django.apps import apps
 from django.db.models.base import ModelBase, subclass_exception, method_get_order, method_set_order
 from django.db.models.fields.related import (OneToOneField, lazy_related_operation)
-# removed in Django 3.0
-# from django.utils.functional import curry
-from functools import partial as curry
 
 from functools import update_wrapper
 
@@ -61,6 +58,17 @@ def add_lazy_relation(cls, field, relation, operation):
         return operation(field, related, local)
 
     lazy_related_operation(function, cls, relation, field=field)
+
+
+# copied from:
+# https://github.com/django/django/blob/1.11/django/utils/functional.py#L13
+# You can't trivially replace this with `functools.partial` because this binds
+# to classes and returns bound instances, whereas functools.partial (on
+# CPython) is a type and its instances don't bind.
+def curry(_curried_func, *args, **kwargs):
+    def _curried(*moreargs, **morekwargs):
+        return _curried_func(*(args + moreargs), **dict(kwargs, **morekwargs))
+    return _curried
 
 
 class ROAModelBase(ModelBase):
