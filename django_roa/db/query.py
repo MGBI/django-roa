@@ -1,10 +1,9 @@
 import logging
-from io import StringIO, BytesIO
+from io import BytesIO
 
 from django.conf import settings
 from django.db.models import query
 from django.db.models.query import BaseIterable
-from django.core import serializers
 # Django >= 1.5
 from django_roa.db import get_roa_headers, get_roa_client
 
@@ -17,10 +16,6 @@ from django.db.models.query_utils import Q
 from django.utils.encoding import force_text
 
 from django_roa.db.exceptions import ROAException, ROANotImplementedYetException
-
-
-
-import requests
 
 logger = logging.getLogger("django_roa")
 
@@ -50,6 +45,7 @@ class Query(object):
         self.extra_select = {}
         self.select_for_update = False
         self.distinct_fields = []
+        self.combinator = None
 
     def can_filter(self):
         return self.filterable

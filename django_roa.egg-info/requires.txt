@@ -1,6 +1,6 @@
 Django
 djangorestframework
-djangorestframework-xml
-djangorestframework-yaml
+djangorestframework-xml@ git+https://github.com/unchris/django-rest-framework-xml.git@python3django3
+djangorestframework-yaml@ git+https://github.com/SnijderC/django-rest-framework-yaml.git@master
 requests
 simplejson

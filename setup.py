@@ -10,6 +10,7 @@ except ImportError:
 
 import sys
 if sys.version_info<(3,3,0):
+    # test with: $ pip2 install -e ./
     requires=[
         'Django',
         'requests',
@@ -20,20 +21,21 @@ if sys.version_info<(3,3,0):
         'djangorestframework-yaml'
     ]
 else:
+    # test with: $ pip3 install -e ./
     requires=[
         'Django',
         'requests',
         'simplejson',
         'djangorestframework',
-        'djangorestframework-xml',
-        'djangorestframework-yaml'
+        'djangorestframework-xml@git+https://github.com/unchris/django-rest-framework-xml.git@python3django3',
+        'djangorestframework-yaml@git+https://github.com/SnijderC/django-rest-framework-yaml.git@master'
     ]
 
 setup(
     name='django-roa',
-    version='2.3.0',
-    url='https://github.com/bjarnoldus/django-roa',
-    download_url='https://github.com/bjarnoldus/django-roa/archive/master.zip',
+    version='3.0.0',
+    url='https://github.com/MGBI/django-roa',
+    download_url='https://github.com/MGBI/django-roa/archive/master.zip',
     license='BSD',
     description="Turn your models into remote resources that you can access through Django's ORM.",
     author='Jeroen Arnoldus',

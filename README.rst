@@ -29,7 +29,7 @@ Supported versions
     :target: https://travis-ci.org/bjarnoldus/django-roa
     :alt: Build Status
 
-- Django 1.9, 1.10, 1.11, 2.0, 2.2 (in progress)
+- Django 1.9, 1.10, 1.11, 2.0, 2.2, 3.0 (in progress)
 - Python 3.2, 3.3, 3.4, 3.5, 3.6, 3.7 (in progress)
 
 Installation
