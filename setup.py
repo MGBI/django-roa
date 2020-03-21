@@ -26,7 +26,7 @@ else:
         'simplejson',
         'djangorestframework',
         'djangorestframework-xml',
-        'git+https://github.com/SnijderC/django-rest-framework-yaml.git@master#egg=rest_framework_yaml'
+        'rest_framework_yaml@git+https://github.com/SnijderC/django-rest-framework-yaml.git'
     ]
 
 setup(
