@@ -1,4 +1,6 @@
 Django
+djangorestframework
+djangorestframework-xml
+djangorestframework-yaml
 requests
 simplejson
-djangorestframework
