@@ -10,6 +10,7 @@ except ImportError:
 
 import sys
 if sys.version_info<(3,3,0):
+    # test with: $ pip2 install -e ./
     requires=[
         'Django',
         'requests',
@@ -20,13 +21,14 @@ if sys.version_info<(3,3,0):
         'djangorestframework-yaml'
     ]
 else:
+    # test with: $ pip3 install -e ./
     requires=[
         'Django',
         'requests',
         'simplejson',
         'djangorestframework',
         'djangorestframework-xml',
-        'rest_framework_yaml@git+https://github.com/SnijderC/django-rest-framework-yaml.git'
+        'djangorestframework-yaml@git+https://github.com/SnijderC/django-rest-framework-yaml.git'
     ]
 
 setup(

@@ -1,4 +1,6 @@
 Django
+djangorestframework
+djangorestframework-xml
+djangorestframework-yaml@ git+https://github.com/SnijderC/django-rest-framework-yaml.git
 requests
 simplejson
-djangorestframework
