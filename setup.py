@@ -33,9 +33,9 @@ else:
 
 setup(
     name='django-roa',
-    version='2.0.13',
-    url='https://github.com/bjarnoldus/django-roa',
-    download_url='https://github.com/bjarnoldus/django-roa/archive/master.zip',
+    version='3.0.0',
+    url='https://github.com/mgbi/django-roa',
+    download_url='https://github.com/mgbi/django-roa/archive/master.zip',
     license='BSD',
     description="Turn your models into remote resources that you can access through Django's ORM.",
     author='Jeroen Arnoldus',

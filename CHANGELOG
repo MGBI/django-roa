@@ -2,6 +2,10 @@
 Django-ROA's changelog
 ======================
 
+Version 3.0.0, 21 Mar 2020
+--------------------------
+* Django 3.0 support
+
 Version 2.0.13, 30 Aug 2016:
 --------------------------
 * Added distinct_fields to query
